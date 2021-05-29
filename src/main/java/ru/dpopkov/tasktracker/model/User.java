@@ -6,16 +6,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
-public class User {
+public class User extends BaseEntity {
 
-    private Long id;
     private String firstName;
     private String lastName;
 
     /**
      * All projects this user is assigned to.
-     * This field is excluded from from some methods to avoid java.lang.StackOverflowError
+     * This field is excluded from some methods to avoid java.lang.StackOverflowError
      */
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

@@ -8,7 +8,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectTest {
 
     private final User user = new User("Jane", "Doe");
-    private final Project project = new Project("Project1", "Description1");
+    private final Project project = new Project("Name", "Description");
+
+    @Test
+    @DisplayName("Field ID is used in equals()")
+    void testEqualsById() {
+        Project other = new Project("Name", "Description");
+        other.setId(10L);
+        assertNotEquals(project, other);
+        project.setId(10L);
+        assertEquals(project, other);
+    }
 
     @Test
     @DisplayName("When add user then project contains user and user contains project")

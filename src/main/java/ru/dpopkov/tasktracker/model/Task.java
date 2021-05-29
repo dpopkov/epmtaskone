@@ -1,15 +1,18 @@
 package ru.dpopkov.tasktracker.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.Duration;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
-public class Task {
+public class Task extends BaseEntity {
 
-    private Long id;
     private String name;
     private String description;
     private Project project;
