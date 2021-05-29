@@ -1,4 +1,4 @@
-package ru.dpopkov.epmtask.model;
+package ru.dpopkov.tasktracker.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

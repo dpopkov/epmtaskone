@@ -1,4 +1,4 @@
-package ru.dpopkov.epmtask;
+package ru.dpopkov.tasktracker;
 
 public class Main {
 

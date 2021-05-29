@@ -1,4 +1,4 @@
-package ru.dpopkov.epmtask;
+package ru.dpopkov.tasktracker;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
