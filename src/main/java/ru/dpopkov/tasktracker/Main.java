@@ -12,7 +12,7 @@ public class Main {
         TaskTracker taskTracker = new TaskTracker(new UserServiceImpl(new SimpleUserRepository()));
 
         UiInput input = new ConsoleUiInput();
-        UiOutput output = System.out::print;
+        UiOutput output = new ConsoleUiOutput();
         ActionPack pack = new ActionPack(input, output, taskTracker);
         Actions actions = new Actions(pack);
 

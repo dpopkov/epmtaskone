@@ -13,5 +13,5 @@ public interface BaseService<T extends BaseEntity> {
 
     List<T> getAll();
 
-    boolean delete(T entity);
+    boolean delete(Long id);
 }

@@ -16,7 +16,7 @@ class MainIT {
     @Test
     @DisplayName("Running Main should print expected textual menu representation to System.out")
     void testMain() {
-        String inputCommand = "3" + NL;
+        String inputCommand = "5" + NL;
         ByteArrayInputStream input = new ByteArrayInputStream(inputCommand.getBytes());
         System.setIn(input);
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -24,8 +24,10 @@ class MainIT {
         String expected = String.join(NL, "",
                 "MENU:",
                 " 1: Add new user",
-                " 2: Show all users",
-                " 3: Exit",
+                " 2: Find user by ID",
+                " 3: Delete user",
+                " 4: Show all users",
+                " 5: Exit",
                 "Enter number of action: ");
 
         Main.main(new String[0]);

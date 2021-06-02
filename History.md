@@ -6,3 +6,4 @@ History of implementation
 3. Add Model: User, Project, Task.
 4. Add interfaces for repositories and simple in-memory implementations.
 5. Implement UI, add service for User and implement operations of adding and viewing all users.
+6. Implement deleting and finding user by ID.

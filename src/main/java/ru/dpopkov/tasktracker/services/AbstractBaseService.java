@@ -31,7 +31,7 @@ public class AbstractBaseService<T extends BaseEntity> implements BaseService<T>
     }
 
     @Override
-    public boolean delete(T entity) {
-        return false;
+    public boolean delete(Long id) {
+        return repository.deleteById(id);
     }
 }

@@ -32,6 +32,20 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("findById calls method findById of repository")
+    void testFindById() {
+        userService.findById(10L);
+        verify(userRepository).findById(10L);
+    }
+
+    @Test
+    @DisplayName("delete calls method deleteById of repository")
+    void testDelete() {
+        userService.delete(10L);
+        verify(userRepository).deleteById(10L);
+    }
+
+    @Test
     @DisplayName("getAll calls method getAll of repository")
     void testFindAll() {
         List<User> all = userService.getAll();

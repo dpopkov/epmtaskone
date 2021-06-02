@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+/** Represents a collection of actions. */
 public class Actions {
 
     private final EnumMap<ActionType, Action> map = new EnumMap<>(ActionType.class);
