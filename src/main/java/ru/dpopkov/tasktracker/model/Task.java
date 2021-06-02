@@ -18,6 +18,8 @@ public class Task extends BaseEntity {
     private Project project;
     private State state = State.OPEN;
     private Duration time;
+    private Long superTaskId;
+    private User createdBy;
     private User assignedTo;
 
     public Task(String name, String description, Project project, Duration time) {
