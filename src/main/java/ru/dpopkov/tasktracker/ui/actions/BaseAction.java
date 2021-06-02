@@ -3,6 +3,7 @@ package ru.dpopkov.tasktracker.ui.actions;
 import ru.dpopkov.tasktracker.Action;
 import ru.dpopkov.tasktracker.ActionType;
 import ru.dpopkov.tasktracker.TaskTracker;
+import ru.dpopkov.tasktracker.ui.Messages;
 import ru.dpopkov.tasktracker.ui.UiInput;
 import ru.dpopkov.tasktracker.ui.UiOutput;
 
@@ -13,13 +14,12 @@ public abstract class BaseAction implements Action {
     private final ActionType type;
     private final String description;
 
-    protected BaseAction(UiInput input, UiOutput output, TaskTracker tracker,
-                         ActionType type, String description) {
+    protected BaseAction(UiInput input, UiOutput output, TaskTracker tracker, ActionType type) {
         this.input = input;
         this.output = output;
         this.tracker = tracker;
         this.type = type;
-        this.description = description;
+        description = Messages.INSTANCE.get(type.messageNameForI18n());
     }
 
     @Override

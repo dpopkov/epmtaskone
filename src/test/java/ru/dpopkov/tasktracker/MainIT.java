@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +31,7 @@ class MainIT {
                 " 5: Exit",
                 "Enter number of action: ");
 
+        Locale.setDefault(Locale.US);
         Main.main(new String[0]);
 
         String actual = buffer.toString();

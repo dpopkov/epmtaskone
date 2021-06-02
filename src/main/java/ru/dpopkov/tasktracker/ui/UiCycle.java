@@ -36,6 +36,8 @@ public class UiCycle {
 
     private class ExitAction implements Action {
 
+        private final String description = Messages.INSTANCE.get("exit");
+
         @Override
         public ActionType type() {
             return ActionType.EXIT_APP;
@@ -43,7 +45,7 @@ public class UiCycle {
 
         @Override
         public String description() {
-            return "Exit";
+            return description;
         }
 
         @Override

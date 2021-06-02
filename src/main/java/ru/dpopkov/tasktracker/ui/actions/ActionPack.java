@@ -4,16 +4,15 @@ import ru.dpopkov.tasktracker.Action;
 import ru.dpopkov.tasktracker.ActionType;
 import ru.dpopkov.tasktracker.TaskTracker;
 import ru.dpopkov.tasktracker.model.User;
+import ru.dpopkov.tasktracker.ui.Messages;
 import ru.dpopkov.tasktracker.ui.UiInput;
 import ru.dpopkov.tasktracker.ui.UiOutput;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
+import java.util.*;
 
 public class ActionPack implements Iterable<Action> {
 
+    private final String enterUserId = Messages.INSTANCE.get("enter_user_id");
     private final UiInput input;
     private final UiOutput output;
     private final TaskTracker tracker;
@@ -40,15 +39,18 @@ public class ActionPack implements Iterable<Action> {
 
     private class AddUserAction extends BaseAction {
 
+        private final String firstPrompt = Messages.INSTANCE.get("enter_first_name");
+        private final String lastPrompt = Messages.INSTANCE.get("enter_last_name");
+
         public AddUserAction() {
-            super(input, output, tracker, ActionType.ADD_USER, "Add new user");
+            super(input, output, tracker, ActionType.ADD_USER);
         }
 
         @Override
         public void execute() {
-            getOutput().print("Enter first name: ");
+            getOutput().prompt(firstPrompt);
             String firstName = getInput().readString();
-            getOutput().print("Enter last name: ");
+            getOutput().prompt(lastPrompt);
             String lastName = getInput().readString();
             getTracker().createUser(firstName, lastName);
         }
@@ -56,40 +58,41 @@ public class ActionPack implements Iterable<Action> {
 
     private class ShowUserByIdAction extends BaseAction {
 
+        private final String cannotFindUser = Messages.INSTANCE.get("cannot_find_user_with_id");
+
         public ShowUserByIdAction() {
-            super(input, output, tracker, ActionType.FIND_USER_BY_ID, "Find user by ID");
+            super(input, output, tracker, ActionType.FIND_USER_BY_ID);
         }
 
         @Override
         public void execute() {
-            final TaskTracker tracker = getTracker();
-            getOutput().print("Enter user ID: ");
-            int userId = getInput().readInt();
-            Optional<User> result = tracker.getUserById(userId);
+            int userId = readUserId();
+            Optional<User> result = getTracker().getUserById(userId);
             if (result.isPresent()) {
                 getOutput().print(format(result.get()));
             } else {
-                getOutput().println("Cannot find user with ID " + userId);
+                getOutput().println(cannotFindUser + " " + userId);
             }
         }
     }
 
     private class DeleteUserAction extends BaseAction {
 
+        private final String cannotFindUser = Messages.INSTANCE.get("cannot_find_user_with_id");
+        private final String userDeleted = Messages.INSTANCE.get("user_deleted");
+
         public DeleteUserAction() {
-            super(input, output, tracker, ActionType.DELETE_USER, "Delete user");
+            super(input, output, tracker, ActionType.DELETE_USER);
         }
 
         @Override
         public void execute() {
-            final TaskTracker tracker = getTracker();
-            getOutput().print("Enter user ID: ");
-            int userId = getInput().readInt();
-            boolean result = tracker.deleteUser(userId);
+            int userId = readUserId();
+            boolean result = getTracker().deleteUser(userId);
             if (result) {
-                getOutput().println("User deleted");
+                getOutput().println(userDeleted);
             } else {
-                getOutput().println("Cannot find user with ID " + userId);
+                getOutput().println(cannotFindUser + " " + userId);
             }
         }
     }
@@ -97,7 +100,7 @@ public class ActionPack implements Iterable<Action> {
     private class ShowAllUsersAction extends BaseAction {
 
         public ShowAllUsersAction() {
-            super(input, output, tracker, ActionType.SHOW_ALL_USERS, "Show all users");
+            super(input, output, tracker, ActionType.SHOW_ALL_USERS);
         }
 
         @Override
@@ -108,6 +111,11 @@ public class ActionPack implements Iterable<Action> {
             }
         }
 
+    }
+
+    private int readUserId() {
+        output.prompt(enterUserId);
+        return input.readInt();
     }
 
     private String format(User user) {
