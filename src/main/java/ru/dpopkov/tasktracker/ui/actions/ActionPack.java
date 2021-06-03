@@ -30,11 +30,6 @@ public class ActionPack implements Iterable<Action> {
         initActions();
     }
 
-    @Override
-    public Iterator<Action> iterator() {
-        return actions.iterator();
-    }
-
     private void initActions() {
         actions.add(new AddUserAction());
         actions.add(new ShowUserByIdAction());
@@ -46,13 +41,30 @@ public class ActionPack implements Iterable<Action> {
         actions.add(new ShowAllProjectsAction());
     }
 
+    @Override
+    public Iterator<Action> iterator() {
+        return actions.iterator();
+    }
+
+    public UiInput getInput() {
+        return input;
+    }
+
+    public UiOutput getOutput() {
+        return output;
+    }
+
+    public TaskTracker getTracker() {
+        return tracker;
+    }
+
     private class AddUserAction extends BaseAction {
 
         private final String firstPrompt = Messages.INSTANCE.get("enter_first_name");
         private final String lastPrompt = Messages.INSTANCE.get("enter_last_name");
 
         public AddUserAction() {
-            super(input, output, tracker, ActionType.ADD_USER);
+            super(ActionType.ADD_USER);
         }
 
         @Override
@@ -70,7 +82,7 @@ public class ActionPack implements Iterable<Action> {
         private final String cannotFindUser = Messages.INSTANCE.get("cannot_find_user_with_id");
 
         public ShowUserByIdAction() {
-            super(input, output, tracker, ActionType.FIND_USER_BY_ID);
+            super(ActionType.FIND_USER_BY_ID);
         }
 
         @Override
@@ -91,7 +103,7 @@ public class ActionPack implements Iterable<Action> {
         private final String userDeleted = Messages.INSTANCE.get("user_deleted");
 
         public DeleteUserAction() {
-            super(input, output, tracker, ActionType.DELETE_USER);
+            super(ActionType.DELETE_USER);
         }
 
         @Override
@@ -109,7 +121,7 @@ public class ActionPack implements Iterable<Action> {
     private class ShowAllUsersAction extends BaseAction {
 
         public ShowAllUsersAction() {
-            super(input, output, tracker, ActionType.SHOW_ALL_USERS);
+            super(ActionType.SHOW_ALL_USERS);
         }
 
         @Override
@@ -128,7 +140,7 @@ public class ActionPack implements Iterable<Action> {
         private final String projectDescription = Messages.INSTANCE.get("enter_project_description");
 
         public AddProjectAction() {
-            super(input, output, tracker, ActionType.ADD_PROJECT);
+            super(ActionType.ADD_PROJECT);
         }
 
         @Override
@@ -142,10 +154,11 @@ public class ActionPack implements Iterable<Action> {
     }
 
     private class FindProjectByIdAction extends BaseAction {
+
         private final String cannotFind = Messages.INSTANCE.get("cannot_find_project_id");
 
         protected FindProjectByIdAction() {
-            super(input, output, tracker, ActionType.FIND_PROJECT_BY_ID);
+            super(ActionType.FIND_PROJECT_BY_ID);
         }
 
         @Override
@@ -166,7 +179,7 @@ public class ActionPack implements Iterable<Action> {
         private final String cannotFind = Messages.INSTANCE.get("cannot_find_project_id");
 
         protected DeleteProjectAction() {
-            super(input, output, tracker, ActionType.DELETE_PROJECT);
+            super(ActionType.DELETE_PROJECT);
         }
 
         @Override
@@ -184,7 +197,7 @@ public class ActionPack implements Iterable<Action> {
     private class ShowAllProjectsAction extends BaseAction {
 
         protected ShowAllProjectsAction() {
-            super(input, output, tracker, ActionType.SHOW_ALL_PROJECTS);
+            super(ActionType.SHOW_ALL_PROJECTS);
         }
 
         @Override
@@ -193,8 +206,6 @@ public class ActionPack implements Iterable<Action> {
             all.forEach(p -> getOutput().println(format(p)));
         }
     }
-
-    // todo: Simplify action classes -> remove input/output/tracker
 
     private int readId(String idPrompt) {
         output.prompt(idPrompt);

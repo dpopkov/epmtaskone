@@ -17,8 +17,8 @@ class MainIT {
     @Test
     @DisplayName("Running Main should print expected textual menu representation to System.out")
     void testMain() {
-        String inputCommand = "9" + NL;
-        ByteArrayInputStream input = new ByteArrayInputStream(inputCommand.getBytes());
+        String exitCommand = "9" + NL;
+        ByteArrayInputStream input = new ByteArrayInputStream(exitCommand.getBytes());
         System.setIn(input);
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         System.setOut(new PrintStream(buffer));

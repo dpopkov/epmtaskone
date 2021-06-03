@@ -9,3 +9,4 @@ History of implementation
 6. Implement deleting and finding user by ID.
 7. Add i18n.
 8. Add operations to create, show and delete projects.
+9. Refactor - simplify inner classes in ActionPack.
