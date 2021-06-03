@@ -4,11 +4,13 @@ import ru.dpopkov.tasktracker.Action;
 import ru.dpopkov.tasktracker.ActionType;
 import ru.dpopkov.tasktracker.TaskTracker;
 import ru.dpopkov.tasktracker.model.Project;
+import ru.dpopkov.tasktracker.model.Task;
 import ru.dpopkov.tasktracker.model.User;
 import ru.dpopkov.tasktracker.ui.Messages;
 import ru.dpopkov.tasktracker.ui.UiInput;
 import ru.dpopkov.tasktracker.ui.UiOutput;
 
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -18,6 +20,9 @@ public class ActionPack implements Iterable<Action> {
 
     private final String enterUserId = Messages.INSTANCE.get("enter_user_id");
     private final String enterProjectId = Messages.INSTANCE.get("enter_project_id");
+    private final String cannotFindProject = Messages.INSTANCE.get("cannot_find_project_id");
+    private final String enterTaskId = Messages.INSTANCE.get("enter_task_id");
+    private final String cannotFindTask = Messages.INSTANCE.get("cannot_find_task_id");
     private final UiInput input;
     private final UiOutput output;
     private final TaskTracker tracker;
@@ -39,6 +44,10 @@ public class ActionPack implements Iterable<Action> {
         actions.add(new FindProjectByIdAction());
         actions.add(new DeleteProjectAction());
         actions.add(new ShowAllProjectsAction());
+        actions.add(new AddTaskAction());
+        actions.add(new FindTaskByIdAction());
+        actions.add(new DeleteTaskAction());
+        actions.add(new ShowAllTasksAction());
     }
 
     @Override
@@ -69,6 +78,7 @@ public class ActionPack implements Iterable<Action> {
 
         @Override
         public void execute() {
+            // todo: refactor prompt and readString to one method here and in all inner classes
             getOutput().prompt(firstPrompt);
             String firstName = getInput().readString();
             getOutput().prompt(lastPrompt);
@@ -155,8 +165,6 @@ public class ActionPack implements Iterable<Action> {
 
     private class FindProjectByIdAction extends BaseAction {
 
-        private final String cannotFind = Messages.INSTANCE.get("cannot_find_project_id");
-
         protected FindProjectByIdAction() {
             super(ActionType.FIND_PROJECT_BY_ID);
         }
@@ -168,7 +176,7 @@ public class ActionPack implements Iterable<Action> {
             if (result.isPresent()) {
                 getOutput().println(format(result.get()));
             } else {
-                getOutput().println(cannotFind + " " + projectId);
+                getOutput().println(cannotFindProject + " " + projectId);
             }
         }
     }
@@ -176,7 +184,6 @@ public class ActionPack implements Iterable<Action> {
     private class DeleteProjectAction extends BaseAction {
 
         private final String projectDeleted = Messages.INSTANCE.get("project_deleted");
-        private final String cannotFind = Messages.INSTANCE.get("cannot_find_project_id");
 
         protected DeleteProjectAction() {
             super(ActionType.DELETE_PROJECT);
@@ -189,7 +196,7 @@ public class ActionPack implements Iterable<Action> {
             if (deleted) {
                 getOutput().println(projectDeleted);
             } else {
-                getOutput().println(cannotFind + " " + projectId);
+                getOutput().println(cannotFindProject + " " + projectId);
             }
         }
     }
@@ -207,6 +214,85 @@ public class ActionPack implements Iterable<Action> {
         }
     }
 
+    private class AddTaskAction extends BaseAction {
+
+        private final String enterName = Messages.INSTANCE.get("enter_task_name");
+        private final String enterDescription = Messages.INSTANCE.get("enter_task_description");
+        private final String enterTime = Messages.INSTANCE.get("enter_time_in_hours");
+
+        protected AddTaskAction() {
+            super(ActionType.ADD_TASK);
+        }
+
+        @Override
+        public void execute() {
+            int projectId = readId(enterProjectId);
+            Optional<Project> foundProject = tracker.getProjectById(projectId);
+            if (foundProject.isPresent()) {
+                getOutput().prompt(enterName);
+                String name = getInput().readString();
+                getOutput().prompt(enterDescription);
+                String description = getInput().readString();
+                getOutput().prompt(enterTime);
+                int hours = getInput().readInt();
+                tracker.createTask(name, description, foundProject.get(), Duration.ofHours(hours));
+            } else {
+                getOutput().println(cannotFindProject + " " + projectId);
+            }
+        }
+    }
+
+    private class FindTaskByIdAction extends BaseAction {
+
+        protected FindTaskByIdAction() {
+            super(ActionType.FIND_TASK_BY_ID);
+        }
+
+        @Override
+        public void execute() {
+            int taskId = readId(enterTaskId);
+            Optional<Task> result = tracker.getTaskById(taskId);
+            if (result.isPresent()) {
+                getOutput().println(format(result.get()));
+            } else {
+                getOutput().println(cannotFindTask + " " + taskId);
+            }
+        }
+    }
+
+    private class DeleteTaskAction extends BaseAction {
+
+        private final String taskDeleted = Messages.INSTANCE.get("task_deleted");
+
+        protected DeleteTaskAction() {
+            super(ActionType.DELETE_TASK);
+        }
+
+        @Override
+        public void execute() {
+            int taskId = readId(enterTaskId);
+            boolean deleted = tracker.deleteTask(taskId);
+            if (deleted) {
+                getOutput().println(taskDeleted);
+            } else {
+                getOutput().println(cannotFindTask + " " + taskId);
+            }
+        }
+    }
+
+    private class ShowAllTasksAction extends BaseAction {
+
+        protected ShowAllTasksAction() {
+            super(ActionType.SHOW_ALL_TASKS);
+        }
+
+        @Override
+        public void execute() {
+            List<Task> all = tracker.getAllTasks();
+            all.forEach(t -> getOutput().println(format(t)));
+        }
+    }
+
     private int readId(String idPrompt) {
         output.prompt(idPrompt);
         return input.readInt();
@@ -218,5 +304,10 @@ public class ActionPack implements Iterable<Action> {
 
     private String format(Project project) {
         return String.format("%2d : %s : %s", project.getId(), project.getName(), project.getDescription());
+    }
+
+    private String format(Task task) {
+        return String.format("%d : %s : %s : %s : %s", task.getId(), task.getName(), task.getDescription(),
+                task.getProject().getName(), task.getTime().toString());
     }
 }

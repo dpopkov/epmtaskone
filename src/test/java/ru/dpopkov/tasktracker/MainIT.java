@@ -17,7 +17,7 @@ class MainIT {
     @Test
     @DisplayName("Running Main should print expected textual menu representation to System.out")
     void testMain() {
-        String exitCommand = "9" + NL;
+        String exitCommand = "13" + NL;
         ByteArrayInputStream input = new ByteArrayInputStream(exitCommand.getBytes());
         System.setIn(input);
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -32,7 +32,11 @@ class MainIT {
                 " 6: Find project by ID",
                 " 7: Delete project",
                 " 8: Show all projects",
-                " 9: Exit",
+                " 9: Add task",
+                "10: Find task by ID",
+                "11: Delete task",
+                "12: Show all tasks",
+                "13: Exit",
                 "Enter number of action: ");
 
         Locale.setDefault(Locale.US);

@@ -13,6 +13,7 @@ public class TextualMenu implements Menu {
     private static final String NL = System.lineSeparator();
 
     private final String selectPrompt = Messages.INSTANCE.get("enter_number_of_action");
+    private final String menuTitle = Messages.INSTANCE.get("menu");
     private final Actions actions;
     private final UiOutput output;
     private final UiInput input;
@@ -27,6 +28,7 @@ public class TextualMenu implements Menu {
     @Override
     public void prepareForShow() {
         indexedActionTypes = actions.getActionTypes();
+        // todo: build text representation in StringBuilder and use in show()
     }
 
     @Override
@@ -35,7 +37,7 @@ public class TextualMenu implements Menu {
             throw new IllegalStateException("Menu is not prepared for showing. Call prepareForShow() first.");
         }
         output.print(NL);
-        output.println(Messages.INSTANCE.get("menu"));
+        output.println(menuTitle);
         for (int i = 0; i < indexedActionTypes.size(); i++) {
             Action action = actions.get(indexedActionTypes.get(i));
             output.print(String.format("%2d: %s%n", (i + 1), action.description()));

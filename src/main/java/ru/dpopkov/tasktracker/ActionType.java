@@ -9,6 +9,10 @@ public enum ActionType {
     FIND_PROJECT_BY_ID,
     DELETE_PROJECT,
     SHOW_ALL_PROJECTS,
+    ADD_TASK,
+    FIND_TASK_BY_ID,
+    DELETE_TASK,
+    SHOW_ALL_TASKS,
     EXIT_APP;
 
     /**
