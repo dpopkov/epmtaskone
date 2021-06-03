@@ -12,15 +12,27 @@ import ru.dpopkov.tasktracker.ui.UiOutput;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Contains pack of {@link Action} instances that are using shared input/output and {@link TaskTracker} instance.
  */
 public class ActionPack implements Iterable<Action> {
 
+    private static final String NL = System.lineSeparator();
+
     private final String enterUserId = Messages.INSTANCE.get("enter_user_id");
+    private final String userTranslated = Messages.INSTANCE.get("user_translated");
+    private final String firstNameTranslated = Messages.INSTANCE.get("first_name_translated");
+    private final String lastNameTranslated = Messages.INSTANCE.get("last_name_translated");
+    private final String projectsTranslated = Messages.INSTANCE.get("projects_translated");
+    private final String cannotFindUser = Messages.INSTANCE.get("cannot_find_user_with_id");
     private final String enterProjectId = Messages.INSTANCE.get("enter_project_id");
     private final String cannotFindProject = Messages.INSTANCE.get("cannot_find_project_id");
+    private final String projectTranslated = Messages.INSTANCE.get("project_translated");
+    private final String projectNameTranslated = Messages.INSTANCE.get("project_name_translated");
+    private final String projectDescriptionTranslated = Messages.INSTANCE.get("project_description_translated");
+    private final String assignedUsersTranslated = Messages.INSTANCE.get("assigned_users_translated");
     private final String enterTaskId = Messages.INSTANCE.get("enter_task_id");
     private final String cannotFindTask = Messages.INSTANCE.get("cannot_find_task_id");
     private final UiInput input;
@@ -48,6 +60,7 @@ public class ActionPack implements Iterable<Action> {
         actions.add(new FindTaskByIdAction());
         actions.add(new DeleteTaskAction());
         actions.add(new ShowAllTasksAction());
+        actions.add(new AssignUserToProjectAction());
     }
 
     @Override
@@ -86,8 +99,6 @@ public class ActionPack implements Iterable<Action> {
 
     private class ShowUserByIdAction extends BaseAction {
 
-        private final String cannotFindUser = Messages.INSTANCE.get("cannot_find_user_with_id");
-
         public ShowUserByIdAction() {
             super(ActionType.FIND_USER_BY_ID);
         }
@@ -97,7 +108,7 @@ public class ActionPack implements Iterable<Action> {
             int userId = readInt(enterUserId);
             Optional<User> result = getTracker().getUserById(userId);
             if (result.isPresent()) {
-                getOutput().print(format(result.get()));
+                getOutput().println(format(result.get()));
             } else {
                 getOutput().println(cannotFindUser + " " + userId);
             }
@@ -106,7 +117,6 @@ public class ActionPack implements Iterable<Action> {
 
     private class DeleteUserAction extends BaseAction {
 
-        private final String cannotFindUser = Messages.INSTANCE.get("cannot_find_user_with_id");
         private final String userDeleted = Messages.INSTANCE.get("user_deleted");
 
         public DeleteUserAction() {
@@ -134,7 +144,7 @@ public class ActionPack implements Iterable<Action> {
         @Override
         public void execute() {
             List<User> all = getTracker().getAllUsers();
-            all.forEach(u -> getOutput().println(format(u)));
+            all.forEach(u -> getOutput().println(formatInRow(u)));
         }
     }
 
@@ -202,7 +212,7 @@ public class ActionPack implements Iterable<Action> {
         @Override
         public void execute() {
             List<Project> all = tracker.getAllProjects();
-            all.forEach(p -> getOutput().println(format(p)));
+            all.forEach(p -> getOutput().println(formatInRow(p)));
         }
     }
 
@@ -282,6 +292,27 @@ public class ActionPack implements Iterable<Action> {
         }
     }
 
+    private class AssignUserToProjectAction extends BaseAction {
+
+        private final EnumMap<TaskTracker.Result, String> resultMessages = new EnumMap<>(TaskTracker.Result.class);
+
+        protected AssignUserToProjectAction() {
+            super(ActionType.ASSIGN_USER_TO_PROJECT);
+            String userAssigned = Messages.INSTANCE.get("user_assigned_to_project");
+            resultMessages.put(TaskTracker.Result.SUCCESS, userAssigned);
+            resultMessages.put(TaskTracker.Result.USER_NOT_FOUND, cannotFindUser);
+            resultMessages.put(TaskTracker.Result.PROJECT_NOT_FOUND, cannotFindProject);
+        }
+
+        @Override
+        public void execute() {
+            int userId = readInt(enterUserId);
+            int projectId = readInt(enterProjectId);
+            TaskTracker.Result result = tracker.assignUserToProject(userId, projectId);
+            getOutput().println(resultMessages.get(result));
+        }
+    }
+
     private String readString(String prompt) {
         getOutput().prompt(prompt);
         return getInput().readString();
@@ -293,10 +324,36 @@ public class ActionPack implements Iterable<Action> {
     }
 
     private String format(User user) {
+        return String.format("%s ID: %2d%n"
+                        + "%s: %s%n"
+                        + "%s: %s%n"
+                        + "%s:%n%s",
+                userTranslated, user.getId(),
+                firstNameTranslated, user.getFirstName(),
+                lastNameTranslated, user.getLastName(),
+                projectsTranslated, user.getProjects().stream()
+                        .map(p -> "\t" + p.getId() + ":" + p.getName())
+                        .collect(Collectors.joining(NL)));
+    }
+
+    private String formatInRow(User user) {
         return String.format("%2d : %s : %s", user.getId(), user.getFirstName(), user.getLastName());
     }
 
     private String format(Project project) {
+        return String.format("%s ID: %2d%n"
+                        + "%s: %s%n"
+                        + "%s: %s%n"
+                        + "%s:%n%s",
+                projectTranslated, project.getId(),
+                projectNameTranslated, project.getName(),
+                projectDescriptionTranslated, project.getDescription(),
+                assignedUsersTranslated, project.getUsers().stream()
+                        .map(u -> "\t" + u.getId() + ": " + u.getFirstName() + " " + u.getLastName())
+                        .collect(Collectors.joining(NL)));
+    }
+
+    private String formatInRow(Project project) {
         return String.format("%2d : %s : %s", project.getId(), project.getName(), project.getDescription());
     }
 

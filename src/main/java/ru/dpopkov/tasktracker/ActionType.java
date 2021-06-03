@@ -13,6 +13,7 @@ public enum ActionType {
     FIND_TASK_BY_ID,
     DELETE_TASK,
     SHOW_ALL_TASKS,
+    ASSIGN_USER_TO_PROJECT,
     EXIT_APP;
 
     /**

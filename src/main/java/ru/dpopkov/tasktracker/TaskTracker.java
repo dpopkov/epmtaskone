@@ -73,4 +73,24 @@ public class TaskTracker {
     public List<Task> getAllTasks() {
         return taskService.getAll();
     }
+
+    public Result assignUserToProject(int userId, int projectId) {
+        Optional<User> userFound = getUserById(userId);
+        if (userFound.isEmpty()) {
+            return Result.USER_NOT_FOUND;
+        }
+        Optional<Project> projectFound = getProjectById(projectId);
+        if (projectFound.isEmpty()) {
+            return Result.PROJECT_NOT_FOUND;
+        }
+        projectFound.get().addUser(userFound.get());
+        // todo: save changes if DB is used
+        return Result.SUCCESS;
+    }
+
+    public enum Result {
+        SUCCESS,
+        USER_NOT_FOUND,
+        PROJECT_NOT_FOUND
+    }
 }
