@@ -8,11 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class SimpleBaseRepository<T extends BaseEntity> implements BaseRepository<T> {
 
-    private static long lastId = 0L;
+    private long lastId = 0L;
 
     private final Map<Long, T> map = new ConcurrentHashMap<>();
 
-    private static synchronized Long nextId() {
+    private synchronized Long nextId() {
         return ++lastId;
     }
 

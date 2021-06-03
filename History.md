@@ -11,3 +11,4 @@ History of implementation
 8. Add operations to create, show and delete projects.
 9. Refactor - simplify inner classes in ActionPack.
 10. Add operations to create, show and delete tasks.
+11. Refactor ActionPack and TextualMenu.

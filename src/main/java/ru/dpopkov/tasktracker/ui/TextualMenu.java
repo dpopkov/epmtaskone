@@ -18,6 +18,7 @@ public class TextualMenu implements Menu {
     private final UiOutput output;
     private final UiInput input;
     private List<ActionType> indexedActionTypes;
+    private String menuText;
 
     public TextualMenu(Actions actions, UiOutput output, UiInput input) {
         this.actions = actions;
@@ -28,7 +29,18 @@ public class TextualMenu implements Menu {
     @Override
     public void prepareForShow() {
         indexedActionTypes = actions.getActionTypes();
-        // todo: build text representation in StringBuilder and use in show()
+        menuText = buildMenuText();
+    }
+
+    private String buildMenuText() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(NL);
+        sb.append(menuTitle).append(NL);
+        for (int i = 0; i < indexedActionTypes.size(); i++) {
+            Action action = actions.get(indexedActionTypes.get(i));
+            sb.append(String.format("%2d. %s%n", (i + 1), action.description()));
+        }
+        return sb.toString();
     }
 
     @Override
@@ -36,12 +48,7 @@ public class TextualMenu implements Menu {
         if (indexedActionTypes == null) {
             throw new IllegalStateException("Menu is not prepared for showing. Call prepareForShow() first.");
         }
-        output.print(NL);
-        output.println(menuTitle);
-        for (int i = 0; i < indexedActionTypes.size(); i++) {
-            Action action = actions.get(indexedActionTypes.get(i));
-            output.print(String.format("%2d: %s%n", (i + 1), action.description()));
-        }
+        output.print(menuText);
     }
 
     @Override
