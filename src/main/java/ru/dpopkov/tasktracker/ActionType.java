@@ -5,6 +5,10 @@ public enum ActionType {
     FIND_USER_BY_ID,
     DELETE_USER,
     SHOW_ALL_USERS,
+    ADD_PROJECT,
+    FIND_PROJECT_BY_ID,
+    DELETE_PROJECT,
+    SHOW_ALL_PROJECTS,
     EXIT_APP;
 
     /**

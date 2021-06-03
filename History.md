@@ -8,3 +8,4 @@ History of implementation
 5. Implement UI, add service for User and implement operations of adding and viewing all users.
 6. Implement deleting and finding user by ID.
 7. Add i18n.
+8. Add operations to create, show and delete projects.
