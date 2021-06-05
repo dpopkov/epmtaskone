@@ -1,4 +1,4 @@
-# Task Tracker System
+# Simple Tracker System
 
 [History of implementation](History.md)
 
